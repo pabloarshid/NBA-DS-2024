@@ -1,23 +1,20 @@
 import pandas as pd
-from nba_api.stats.endpoints import leagueleaders, leaguelineupviz
+from nba_api.stats.endpoints import leagueleaders, teamplayeronoffsummary
 from datetime import datetime
 
-# Set display options
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-pd.set_option('display.max_colwidth', None)
+def get_team_offensive_rating(team_id, player_id, season):
+    team_stats = teamplayeronoffsummary.TeamPlayerOnOffSummary(team_id=team_id, season=season)
+    df = team_stats.get_data_frames()[0]  # Selecting the correct DataFrame
 
-def get_team_offensive_rating(team_id, season):
-    team_stats = leaguelineupviz.LeagueLineupViz(season=season, team_id_nullable=team_id, minutes_min=0, season_type_all_star = 'Regular Season')
-    df = team_stats.get_data_frames()[0]
-    print(df.head())
-    # Extract offensive rating; ensure to check the correct column name for offensive rating
-    offensive_rating = df['OFF_RATING'].iloc[0] if 'OFF_RATING' in df.columns else None
+    # Filter for the specific player using player_id
+    player_row = df[df['VS_PLAYER_ID'] == player_id]
+
+    # Extract offensive rating
+    offensive_rating = player_row['OFF_RATING'].iloc[0] if not player_row.empty else None
 
     return offensive_rating
 
-def get_top_assist_leaders_team_stats(seasons_back=2):
+def get_top_assist_leaders_team_stats(seasons_back=10):
     current_year = datetime.now().year
     team_stats_data = []
 
@@ -31,7 +28,7 @@ def get_top_assist_leaders_team_stats(seasons_back=2):
 
             if not df_leaders.empty:
                 top_leader = df_leaders.iloc[0]
-                offensive_rating = get_team_offensive_rating(top_leader['TEAM_ID'], season)
+                offensive_rating = get_team_offensive_rating(top_leader['TEAM_ID'], top_leader['PLAYER_ID'], season)
 
                 team_stats_data.append({
                     'Season': season,

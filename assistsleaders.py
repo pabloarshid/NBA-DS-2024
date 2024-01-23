@@ -8,7 +8,7 @@ def get_game_logs(player_id, season):
     df = game_logs.get_data_frames()[0]
     return df['AST']
 
-def get_top_assist_leaders(seasons_back=10):
+def get_top_assist_leaders(seasons_back=40):
     current_year = datetime.now().year
     leaders = []
 
@@ -51,6 +51,7 @@ df_plot = pd.DataFrame(plot_data)
 
 # Sort the DataFrame by season in descending order for plotting
 df_plot.sort_values(by='Season', ascending=False, inplace=True)
+df_plot.to_csv("assist data")
 
 # Creating the boxplot using Plotly
 fig = px.box(df_plot, x='Player-Season', y='Assists', title='Game-by-Game Assist Distribution of Top Assist Leaders by Season')
