@@ -4,15 +4,13 @@ import pandas as pd
 
 app = Flask(__name__)
 
-@app.route('/data')
-def data():
-    df = pd.read_csv('tyresehaliburton/static/data/league_avg_stats.csv')
-    # Assuming column "1" and "2" are your columns of interest
-    data = df[['PT/G', 'AST/G']].to_json(orient='records')
-    return jsonify(data)
-
 @app.route('/')
 def home():
+    
+    return render_template('home.html')
+
+@app.route('/haliburton')
+def haliburton():
     #  Read data from CSV
     df = pd.read_csv('assistdata.csv')  # Update with your CSV file path
 
@@ -39,11 +37,8 @@ def home():
 
     # Convert the figure to HTML
     plot_html = fig.to_html(full_html=False)
-    return render_template('home.html', plot_html=plot_html)
-
-@app.route('/haliburton')
-def haliburton():
-    return render_template('haliburton.html')
+    
+    return render_template('haliburton.html', plot_html=plot_html)
 
 if __name__ == '__main__':
     app.run(debug=True)

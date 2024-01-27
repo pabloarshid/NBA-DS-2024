@@ -19,7 +19,17 @@
 <body>
     <nav>
         <ul>
-            <li><a href="{{ url_for('home') }}">عمر</a></li>
+            <li class = "home">
+                <a href="{{ url_for('home') }}">
+                    <span class="additional-text">صابر ارشد</span> <!-- Hidden text -->
+                    عمر
+                </a>
+            </li>
+            <li class="second">
+                <a href="{{ url_for('haliburton') }}" class="{{ 'active' if request.endpoint == 'haliburton' else '' }}">
+                    <img src="{{ url_for('static', filename='images/THlogo.png') }}" alt="Description of Image" class="halinav">
+                </a>
+            </li>
         </ul>
     </nav>
 
