@@ -11,7 +11,7 @@ from datetime import datetime
 
 def create_app():
     app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:newerjeans@localhost:5432/postgres'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:newerjeans@localhost:5432/postgres2'
 
     db.init_app(app)  # Initialize the db instance with the app
     migrate = Migrate(app, db)  # Initialize Flask-Migrate
