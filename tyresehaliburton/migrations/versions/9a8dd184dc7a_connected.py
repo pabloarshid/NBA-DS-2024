@@ -1,8 +1,8 @@
-"""Initial migration.
+"""connected
 
-Revision ID: 3f292baf2e48
+Revision ID: 9a8dd184dc7a
 Revises: 
-Create Date: 2024-01-29 23:10:26.419447
+Create Date: 2024-01-30 00:15:43.371345
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3f292baf2e48'
+revision = '9a8dd184dc7a'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,9 @@ def upgrade():
     sa.Column('player_id', sa.Integer(), nullable=False),
     sa.Column('player_name', sa.String(), nullable=False),
     sa.Column('assists', sa.Numeric(precision=5, scale=3), nullable=True),
+    sa.Column('games_played', sa.Integer(), nullable=True),
+    sa.Column('turnovers', sa.Numeric(precision=5, scale=3), nullable=True),
+    sa.Column('points', sa.Numeric(precision=5, scale=3), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('player_id')
     )
@@ -32,6 +35,7 @@ def upgrade():
     sa.Column('game_date', sa.DateTime(), nullable=False),
     sa.Column('assists', sa.Integer(), nullable=False),
     sa.Column('turnovers', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['player_id'], ['assist_leader.player_id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

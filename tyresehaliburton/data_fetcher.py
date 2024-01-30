@@ -11,7 +11,7 @@ yesterday = today - timedelta(days=1)
 formatted_yesterday = yesterday.strftime('%m/%d/%Y')
 formatted_today = today.strftime('%m/%d/%Y')
 
-
+print(yesterday)
 def fetch_and_store_nba_data():
     app = create_app()
     with app.app_context():
@@ -45,22 +45,31 @@ def fetch_and_store_nba_data():
 
         for index, player in top_20_assist_leaders.iterrows():
             player_id = player['PLAYER_ID']
-            gamelog = playergamelog.PlayerGameLog(player_id=player_id, season='2023-24', date_from_nullable=formatted_yesterday, date_to_nullable=formatted_today)
+            gamelog = playergamelog.PlayerGameLog(player_id=player_id, season='2023-24')
             player_game_data = gamelog.get_data_frames()[0]
-
+            # print(player_game_data.head())
             # Insert data into the database
             for _, row in player_game_data.iterrows():
                 game_date = datetime.strptime(row['GAME_DATE'], '%b %d, %Y')
-                if game_date.date() == yesterday:  # Check if the game happened yesterday
-                    existing_entry = GameLog.query.filter_by(player_id=row['Player_ID'], game_date=game_date).first()
-                    if not existing_entry:
-                        game_log_entry = GameLog(
-                            player_id=row['Player_ID'],
-                            game_date=game_date,
-                            assists=row['AST'],
-                            turnovers=row['TOV']
-                        )
-                        db.session.add(game_log_entry)
-            db.session.commit()
+                # print(yesterday)
+                # print(game_date)
+                # if game_date.date() == yesterday:
+                existing_entry = GameLog.query.filter_by(player_id=row['Player_ID'], game_date=game_date).first()
+                if not existing_entry:
+                    game_log_entry = GameLog(
+                        player_id=row['Player_ID'],
+                        game_date=game_date,
+                        assists=row['AST'],
+                        turnovers=row['TOV']
+                    )
+                    db.session.add(game_log_entry)
+
+            # Commit all new entries outside the loop
+            try:
+                db.session.commit()
+            except Exception as e:
+                print(f"Error during commit: {e}")
+                db.session.rollback()
+            
 if __name__ == '__main__':
     fetch_and_store_nba_data()
