@@ -43,19 +43,19 @@ This web application provides an interactive analysis of NBA assist leaders over
     flask run
 
 ### Usage
-    - Access the web application via http://localhost:5000 or the configured port.
-    - Navigate through the application to view different visualizations and analyses.
+- Access the web application via http://localhost:5000 or the configured port.
+- Navigate through the application to view different visualizations and analyses.
 
 ### Data Fetching
-    - The script for fetching and updating the database is scheduled to run every night at 2 AM using a cron job.
-    - Manual execution can be done by running the data_fetcher.py script.
+- The script for fetching and updating the database is scheduled to run every night at 2 AM using a cron job.
+- Manual execution can be done by running the data_fetcher.py script.
 
 ### Contributing
-    - Contributions to this project are welcome. Please fork the repository and open a pull request with your features or fixes.
+- Contributions to this project are welcome. Please fork the repository and open a pull request with your features or fixes.
 
 ### Contact
-    Developer: Umar Arshid
-    Email: umarsabirvancity@gmail.com
+- Developer: Umar Arshid
+- Email: umarsabirvancity@gmail.com
 
 
 
