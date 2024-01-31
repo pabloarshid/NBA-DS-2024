@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import pytz  # For timezone handling, install with 'pip install pytz'
 from nba_api.stats.endpoints import leagueleaders, playergamelog
-from models import GameLog, AssistLeader
+from models import GameLog, AssistLeader, Player
 from extensions import db
 from app import create_app
 
@@ -11,7 +11,6 @@ yesterday = today - timedelta(days=1)
 formatted_yesterday = yesterday.strftime('%m/%d/%Y')
 formatted_today = today.strftime('%m/%d/%Y')
 
-print(yesterday)
 def fetch_and_store_nba_data():
     app = create_app()
     with app.app_context():
@@ -70,6 +69,45 @@ def fetch_and_store_nba_data():
             except Exception as e:
                 print(f"Error during commit: {e}")
                 db.session.rollback()
+                
+def fetch_and_store_assist_leaders(seasons_back=10):
+    app = create_app()
+    with app.app_context():
+        current_year = datetime.now().year
+        for year in range(current_year - seasons_back, current_year):
+            season = f"{year-1}-{str(year)[2:]}"
+            print(f"Fetching data for season: {season}")
+            try:
+                # Fetch the assist leader for the season
+                data = leagueleaders.LeagueLeaders(stat_category_abbreviation='AST', season=season, per_mode48='PerGame')
+                df = data.get_data_frames()[0]
+                
+                if not df.empty:
+                    assist_leader = df.iloc[0]
+                    # print(assist_leader.columns)
+                    player_name = assist_leader['PLAYER']
+                    player_id = assist_leader['PLAYER_ID']
+
+                    # Check if player for the season already exists
+                    player = Player.query.filter_by(name=player_name, season=season).first()
+                    if not player:
+                        player = Player(name=player_name, season=season)
+                        db.session.add(player)
+                        db.session.commit()
+
+                    # Fetch game logs
+                    game_logs = playergamelog.PlayerGameLog(player_id=player_id, season=season).get_data_frames()[0]
+                    for _, row in game_logs.iterrows():
+                        game_date = datetime.strptime(row['GAME_DATE'], '%b %d, %Y').date()
+                        # Check if game log already exists to prevent duplicates
+                        if not GameLog.query.filter_by(player_id=player.id, game_date=game_date).first():
+                            game_log_entry = GameLog(player_id=player.id, game_date=game_date, assists=row['AST'], turnovers=row['TOV'])
+                            db.session.add(game_log_entry)
+                    db.session.commit()
+            except Exception as e:
+                print(f"Error fetching data for season {season}: {e}")
+
             
 if __name__ == '__main__':
-    fetch_and_store_nba_data()
+    # fetch_and_store_nba_data()
+    fetch_and_store_assist_leaders()

@@ -60,7 +60,7 @@ def create_app():
                 yaxis=dict(tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
                 title_font=dict(color='#BEC0C2'),
                 paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)'
+                plot_bgcolor='rgba(0,0,0)'
             )
 
             # Convert to HTML
