@@ -1,20 +1,42 @@
-Fetching data for season: 2013-14
-Error fetching data for season 2013-14: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2014-15
-Error fetching data for season 2014-15: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2015-16
-Error fetching data for season 2015-16: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2016-17
-Error fetching data for season 2016-17: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2017-18
-Error fetching data for season 2017-18: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2018-19
-Error fetching data for season 2018-19: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2019-20
-Error fetching data for season 2019-20: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2020-21
-Error fetching data for season 2020-21: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2021-22
-Error fetching data for season 2021-22: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
-Fetching data for season: 2022-23
-Error fetching data for season 2022-23: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[AssistLeader(assist_leader)]'. Original exception was: Could not determine join condition between parent/child tables on relationship AssistLeader.game_logs - there are no foreign keys linking these tables.  Ensure that referencing columns are associated with a ForeignKey or ForeignKeyConstraint, or specify a 'primaryjoin' expression.
+Top 20 assist leaders fetched successfully.
+Fetching top assist leader for season: 1983-84
+Fetching top assist leader for season: 1984-85
+Fetching top assist leader for season: 1985-86
+Fetching top assist leader for season: 1986-87
+Fetching top assist leader for season: 1987-88
+Fetching top assist leader for season: 1988-89
+Fetching top assist leader for season: 1989-90
+Fetching top assist leader for season: 1990-91
+Fetching top assist leader for season: 1991-92
+Fetching top assist leader for season: 1992-93
+Fetching top assist leader for season: 1993-94
+Fetching top assist leader for season: 1994-95
+Fetching top assist leader for season: 1995-96
+Fetching top assist leader for season: 1996-97
+Fetching top assist leader for season: 1997-98
+Fetching top assist leader for season: 1998-99
+Fetching top assist leader for season: 1999-00
+Fetching top assist leader for season: 2000-01
+Fetching top assist leader for season: 2001-02
+Fetching top assist leader for season: 2002-03
+Fetching top assist leader for season: 2003-04
+Fetching top assist leader for season: 2004-05
+Fetching top assist leader for season: 2005-06
+Fetching top assist leader for season: 2006-07
+Fetching top assist leader for season: 2007-08
+Fetching top assist leader for season: 2008-09
+Fetching top assist leader for season: 2009-10
+Fetching top assist leader for season: 2010-11
+Fetching top assist leader for season: 2011-12
+Fetching top assist leader for season: 2012-13
+Fetching top assist leader for season: 2013-14
+Fetching top assist leader for season: 2014-15
+Fetching top assist leader for season: 2015-16
+Fetching top assist leader for season: 2016-17
+Fetching top assist leader for season: 2017-18
+Fetching top assist leader for season: 2018-19
+Fetching top assist leader for season: 2019-20
+Fetching top assist leader for season: 2020-21
+Fetching top assist leader for season: 2021-22
+Fetching top assist leader for season: 2022-23
+Top assist leaders up to 40 years ago fetched successfully.

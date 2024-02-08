@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate  # Import Flask-Migrate
 import plotly.express as px
 import pandas as pd
-from models import AssistLeader, GameLog
+from models import  GameLog
 from extensions import db  # Import the SQLAlchemy instance
 from nba_api.stats.endpoints import leagueleaders, playergamelog
 from datetime import datetime
