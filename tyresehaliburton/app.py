@@ -7,6 +7,7 @@ from models import  GameLog
 from extensions import db  # Import the SQLAlchemy instance
 from nba_api.stats.endpoints import leagueleaders, playergamelog
 from datetime import datetime
+import numpy as np
 
 
 def create_app():
