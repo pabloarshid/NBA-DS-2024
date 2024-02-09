@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate  # Import Flask-Migrate
 import plotly.express as px
 import pandas as pd
-from models import  GameLog
+from models import  GameLog, SeasonStats, Player, Season
 from extensions import db  # Import the SQLAlchemy instance
 from nba_api.stats.endpoints import leagueleaders, playergamelog
 from datetime import datetime
@@ -24,51 +24,59 @@ def create_app():
     @app.route('/haliburton')
     def haliburton():
         try:
-            # Fetch data from database
-            leaders = AssistLeader.query.order_by(AssistLeader.assists.desc()).limit(20).all()
-            
-            # Prepare data for plotting
-            names = [leader.player_name for leader in leaders]
-            assists = [leader.assists for leader in leaders]
+            current_year = datetime.now().year
+            season_str_this_year = f"{current_year-1}-{str(current_year)[-2:]}"
+            season_str_40_years_ago = f"{current_year-41}-{str(current_year-40)[-2:]}"
+
+            # Fetch this year's assist leaders
+            this_year_stats = db.session.query(SeasonStats, Player, Season).join(Player).join(Season).filter(Season.year == season_str_this_year).all()
+
+            # Fetch past 40 years' assist leaders
+            past_40_years_stats = db.session.query(SeasonStats, Player, Season).join(Player).join(Season).filter(Season.year.between(season_str_40_years_ago, season_str_this_year)).all()
+
+            # Prepare data for this year's plot
+            data_this_year = [{'Player': stats.Player.player_name, 'Assists': stats.SeasonStats.assists, 'Season': stats.Season.year} for stats in this_year_stats]
+            df_this_year = pd.DataFrame(data_this_year)
+
+            # Prepare data for past 40 years' plot
+            data_past_40_years = [{'Player': stats.Player.player_name, 'Assists': stats.SeasonStats.assists, 'Season': stats.Season.year} for stats in past_40_years_stats]
+            df_past_40_years = pd.DataFrame(data_past_40_years)
+
+            # Generate Plotly figures
+            fig_this_year = px.box(df_this_year, x='Player', y='Assists', title="Assist Leaders of This Year", color='Season')
+            fig_past_40_years = px.box(df_past_40_years, x='Player', y='Assists', title="Assist Leaders of the Past 40 Years", color='Season')
+
+            # Update layout for transparency and label rotation
+            fig_this_year.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_tickangle=-90)
+            fig_past_40_years.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)', xaxis_tickangle=-90)
+
+            # Convert to HTML
+            graph_html_this_year = fig_this_year.to_html(full_html=False)
+            graph_html_past_40_years = fig_past_40_years.to_html(full_html=False)
  # Crea te Plotly figure
-            fig = px.bar(x=names, y=assists, title="Top 20 NBA Assist Leaders")
-                # Update layout for transparent background
-            fig.update_layout(
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                xaxis_tickangle=-90  # Rotate x-axis labels to vertical
-            )
-            # Convert to HTML
-            graph_html = fig.to_html(full_html=False)
-            
-            # Fetch the top 20 assist leaders
-            top_20_leaders = AssistLeader.query.order_by(AssistLeader.assists.desc()).limit(20).all()
+            # fig = px.bar(x=names, y=assists, title="Top 20 NBA Assist Leaders")
+            #     # Update layout for transparent background
+            # fig.update_layout(
+            #     plot_bgcolor='rgba(0,0,0,0)',
+            #     paper_bgcolor='rgba(0,0,0,0)',
+            #     xaxis_tickangle=-90  # Rotate x-axis labels to vertical
+            # )
+            # # Convert to HTML
+            # graph_html = fig.to_html(full_html=False)
+            # fig2.update_layout(
+            #     height=600,
+            #     xaxis=dict(tickangle=-45, tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+            #     yaxis=dict(tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+            #     title_font=dict(color='#BEC0C2'),
+            #     paper_bgcolor='rgba(0,0,0,0)',
+            #     plot_bgcolor='rgba(0,0,0)'
+            # )
 
-            # Prepare data for plotting
-            data = []
-            for leader in top_20_leaders:
-                for log in leader.game_logs:
-                    data.append({'Player': leader.player_name, 'Category': 'Assists', 'Count': log.assists})
-                    data.append({'Player': leader.player_name, 'Category': 'Turnovers', 'Count': log.turnovers})
-            df = pd.DataFrame(data)     # Create Plotly figure for boxplot
-            # Create the box plot
-            fig2 = px.box(df, x='Player', y='Count', color='Category', title="Assists and Turnovers Distribution of Top 20 NBA Assist Leaders")
-    
-            # fig2.update_traces(marker_color='#FDBB30', line_color='#FDBB30')
-            fig2.update_layout(
-                height=600,
-                xaxis=dict(tickangle=-45, tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
-                yaxis=dict(tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
-                title_font=dict(color='#BEC0C2'),
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0)'
-            )
-
-            # Convert to HTML
-            graph_html2 = fig2.to_html(full_html=False)
+            # # Convert to HTML
+            # graph_html2 = fig2.to_html(full_html=False)
 
             
-            return render_template('haliburton.html',plot_html = graph_html, plot_html2=graph_html2)
+            return render_template('haliburton.html',plot_html = graph_html_this_year, plot_html2=graph_html_past_40_years)
         except Exception as e:
             # Handle errors like file not found, invalid format etc.
             return str(e), 500

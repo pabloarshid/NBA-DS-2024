@@ -26,16 +26,36 @@ class SeasonStats(db.Model):
     games_played = db.Column(db.Integer)
     turnovers = db.Column(db.Float)
     points = db.Column(db.Float)
-    game_logs = db.relationship('GameLog', backref='season_stats', lazy=True)
-
+    game_logs = db.relationship('GameLog', back_populates='season_stats')
+    
 class GameLog(db.Model):
     __tablename__ = 'game_log'
     id = db.Column(db.Integer, primary_key=True)
-    player_name = db.Column(db.String, nullable=False)
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
-    season_stats_id = db.Column(db.Integer, db.ForeignKey('season_stats.id'), nullable=False)
+    season_stats_id = db.Column(db.Integer, db.ForeignKey('season_stats.id'), nullable=False)  # Connect to SeasonStats
+    game_id = db.Column(db.String, nullable=False)
     game_date = db.Column(db.Date, nullable=False)
-    points = db.Column(db.Float, nullable=False)
-    minutes_played = db.Column(db.Float, nullable=False)  # Assuming you want to store minutes as a float
-    assists = db.Column(db.Float, nullable=False)
-    turnovers = db.Column(db.Float, nullable=False)
+    matchup = db.Column(db.String, nullable=False)
+    wl = db.Column(db.String(1))
+    min = db.Column(db.Float, nullable=False)
+    fgm = db.Column(db.Integer)
+    fga = db.Column(db.Integer)
+    fg_pct = db.Column(db.Float)
+    fg3m = db.Column(db.Integer)
+    fg3a = db.Column(db.Integer)
+    fg3_pct = db.Column(db.Float)
+    ftm = db.Column(db.Integer)
+    fta = db.Column(db.Integer)
+    ft_pct = db.Column(db.Float)
+    oreb = db.Column(db.Integer)
+    dreb = db.Column(db.Integer)
+    reb = db.Column(db.Integer)
+    ast = db.Column(db.Integer)
+    stl = db.Column(db.Integer)
+    blk = db.Column(db.Integer)
+    tov = db.Column(db.Integer)
+    pf = db.Column(db.Integer)
+    pts = db.Column(db.Integer)
+    plus_minus = db.Column(db.Integer)
+
+    # Relationship to SeasonStats
+    season_stats = db.relationship('SeasonStats', back_populates='game_logs')

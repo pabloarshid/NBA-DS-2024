@@ -64,10 +64,7 @@ def fetch_top_assist_leaders():
                 season_stats.turnovers = turnovers
                 season_stats.points = points
 
-        db.session.commit()
-
-
-        
+        db.session.commit()        
 def fetch_top_assist_leaders_past_40_years():
     app = create_app()
     with app.app_context():
@@ -120,15 +117,82 @@ def fetch_top_assist_leaders_past_40_years():
             except Exception as e:
                 print(f"Error fetching data for season {season_str}: {e}")
                 db.session.rollback()
+
+def fetch_and_save_game_logs():
+    app = create_app()
+    with app.app_context():
+        players = Player.query.all()
+        
+        for player in players:
+            season_stats_entries = SeasonStats.query.filter_by(player_id=player.id).all()
+            
+            for season_stats in season_stats_entries:
+                season = Season.query.get(season_stats.season_id)
+                if not season:
+                    continue  # Skip if season not found
+                
+                season_str = season.year
+                print(f"Fetching game logs for {player.player_name} for the {season_str} season.")
+                
+                try:
+                    game_logs_data = playergamelog.PlayerGameLog(player_id=player.player_id, season=season_str).get_data_frames()[0]
+                except Exception as e:
+                    print(f"Error fetching game logs: {e}")
+                    continue
+                
+                for _, row in game_logs_data.iterrows():
+                    game_id = row['Game_ID']
+                    # Check if game log entry already exists
+                    existing_log = GameLog.query.filter_by(game_id=game_id, season_stats_id=season_stats.id).first()
+                    
+                    if existing_log:
+                        print(f"Game log for game {game_id} already exists. Skipping.")
+                        continue  # Skip existing entries
+                    
+                    # Create new game log entry
+                    new_log = GameLog(
+                        season_stats_id=season_stats.id,
+                        game_id=game_id,
+                        game_date=datetime.strptime(row['GAME_DATE'], '%b %d, %Y'),
+                        matchup=row['MATCHUP'],
+                        wl=row['WL'],
+                        min=row['MIN'],
+                        fgm=row['FGM'],
+                        fga=row['FGA'],
+                        fg_pct=row['FG_PCT'],
+                        fg3m=row['FG3M'],
+                        fg3a=row['FG3A'],
+                        fg3_pct=row['FG3_PCT'],
+                        ftm=row['FTM'],
+                        fta=row['FTA'],
+                        ft_pct=row['FT_PCT'],
+                        oreb=row['OREB'],
+                        dreb=row['DREB'],
+                        reb=row['REB'],
+                        ast=row['AST'],
+                        stl=row['STL'],
+                        blk=row['BLK'],
+                        tov=row['TOV'],
+                        pf=row['PF'],
+                        pts=row['PTS'],
+                        plus_minus=row['PLUS_MINUS'],
+                    )
+                    db.session.add(new_log)
+                
+                db.session.commit()
+                print(f"Finished updating game logs for {player.player_name} for the {season_str} season.")
+
+
+            
             
 if __name__ == '__main__':
-    # fetch_and_store_nba_data()
-    # fetch_and_store_assist_leaders()
     try:
-        fetch_top_assist_leaders()
-        print("Top 20 assist leaders fetched successfully.")
-        fetch_top_assist_leaders_past_40_years()
-        print("Top assist leaders up to 40 years ago fetched successfully.")
+        # fetch_top_assist_leaders()
+        # print("Top 20 assist leaders fetched successfully.")
+        # fetch_top_assist_leaders_past_40_years()
+        # print("Top assist leaders up to 40 years ago fetched successfully.")
+        fetch_and_save_game_logs()
+        print("PLayer game logs fetched successfully.")
     except Exception as e:
         print(f"An error occurred: {e}")
         db.session.rollback()
