@@ -52,9 +52,9 @@ def fetch_top_assist_leaders():
                 db.session.commit()  # Commit to ensure player ID is available
 
             # Update SeasonStats for the player and season
-            season_stats = SeasonStats.query.filter_by(player_id=player.id, season_id=season.id).first()
+            season_stats = SeasonStats.query.filter_by(player_id=player.player_id, season_id=season.id).first()
             if not season_stats:
-                season_stats = SeasonStats(player_id=player.id, season_id=season.id, assist_leader=is_assist_leader, player_name=player_name, assists=assists_per_game, games_played=games_played, turnovers=turnovers, points=points)
+                season_stats = SeasonStats(player_id=player.player_id, season_id=season.id, assist_leader=is_assist_leader, player_name=player_name, assists=assists_per_game, games_played=games_played, turnovers=turnovers, points=points)
                 db.session.add(season_stats)
             else:
                 # Update existing stats, potentially adjust the assist_leader flag
@@ -100,9 +100,9 @@ def fetch_top_assist_leaders_past_40_years():
                             db.session.add(player)
                             db.session.commit()
 
-                        season_stats = SeasonStats.query.filter_by(player_id=player.id, season_id=season.id).first()
+                        season_stats = SeasonStats.query.filter_by(player_id=player.player_id, season_id=season.id).first()
                         if not season_stats:
-                            season_stats = SeasonStats(player_id=player.id, season_id=season.id, assist_leader=True, player_name=player_name, assists=assists_per_game, games_played=games_played, turnovers=turnovers, points=points)
+                            season_stats = SeasonStats(player_id=player.player_id, season_id=season.id, assist_leader=True, player_name=player_name, assists=assists_per_game, games_played=games_played, turnovers=turnovers, points=points)
                             db.session.add(season_stats)
                         else:
                             season_stats.assist_leader = True
@@ -124,7 +124,7 @@ def fetch_and_save_game_logs():
         players = Player.query.all()
         
         for player in players:
-            season_stats_entries = SeasonStats.query.filter_by(player_id=player.id).all()
+            season_stats_entries = SeasonStats.query.filter_by(player_id=player.player_id).all()
             
             for season_stats in season_stats_entries:
                 season = Season.query.get(season_stats.season_id)
@@ -189,8 +189,8 @@ if __name__ == '__main__':
     try:
         # fetch_top_assist_leaders()
         # print("Top 20 assist leaders fetched successfully.")
-        # fetch_top_assist_leaders_past_40_years()
-        # print("Top assist leaders up to 40 years ago fetched successfully.")
+        fetch_top_assist_leaders_past_40_years()
+        print("Top assist leaders up to 40 years ago fetched successfully.")
         fetch_and_save_game_logs()
         print("PLayer game logs fetched successfully.")
     except Exception as e:

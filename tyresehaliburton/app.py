@@ -22,7 +22,7 @@ def fetch_current_season_assist_leaders():
     assist_leaders = db.session.query(
         Player.player_name,
         func.sum(GameLog.ast).label('total_assists')
-    ).join(SeasonStats, SeasonStats.player_id == Player.id)\
+    ).join(SeasonStats, SeasonStats.player_id == Player.player_id)\
      .join(GameLog, GameLog.season_stats_id == SeasonStats.id)\
      .filter(SeasonStats.season_id == season.id)\
      .group_by(Player.player_name)\
@@ -31,14 +31,17 @@ def fetch_current_season_assist_leaders():
      .all()
 
     return assist_leaders
+
 def fetch_top_10_players_avg_assists_2023_24():
     season_str = "2023-24"  # Define the season string
-
+    season = Season.query.filter_by(year=season_str).first()
+    if not season:
+        return []
     # Query to fetch top 10 players' names and their average points for the 2023-24 season
     top_players_avg_assists = db.session.query(
         Player.player_name,
         (SeasonStats.assists).label('avg_assists_per_game')
-    ).join(SeasonStats, SeasonStats.player_id == Player.id)\
+    ).join(SeasonStats, SeasonStats.player_id == Player.player_id)\
      .join(Season, SeasonStats.season_id == Season.id)\
      .filter(Season.year == season_str)\
      .order_by((SeasonStats.assists).desc())\
@@ -46,22 +49,58 @@ def fetch_top_10_players_avg_assists_2023_24():
      .all()
 
     return top_players_avg_assists
+def get_top_10_assist_leaders_for_season(season_year):
+    season = Season.query.filter_by(year=season_year).first()
+    if not season:
+        return []
 
-    game_logs = []
-    for player in top_10_players:
-        player_id = player.SeasonStats.player_id
-        season_stats = SeasonStats.query.filter_by(player_id=player_id, season_id=season.id).first()
-        
-        if season_stats:
-            player_game_logs = GameLog.query.filter_by(season_stats_id=season_stats.id).all()
-            for log in player_game_logs:
-                game_logs.append({
-                    'Player': player.player_name,
-                    'Game Date': log.game_date,
-                    'Assists': log.ast,
-                    'Turnovers': log.tov
-                })
+    top_10_assist_leaders = db.session.query(
+            Player.player_id,
+            Player.player_name,
+            SeasonStats.assists.label('avg_assists')
+        ).join(SeasonStats, Player.player_id == SeasonStats.player_id)\
+        .filter(SeasonStats.season_id == season.id)\
+        .order_by(SeasonStats.assists.desc())\
+        .limit(10)\
+        .all()
+     
+    return top_10_assist_leaders
+
+def fetch_game_logs_for_players(player_ids, season_id):
+    season_year = "2023-24" 
+    # First, get the season object to ensure we have the correct season_id
+    season = Season.query.filter_by(year=season_year).first()
+    if not season:
+        print(f"No season found for {season_year}")
+        return []
+
+    # Get SeasonStats ids for the given players and season
+    season_stats_ids = db.session.query(SeasonStats.id)\
+        .filter(SeasonStats.player_id.in_(player_ids), SeasonStats.season_id == season.id)\
+        .all()
+    season_stats_ids = [id[0] for id in season_stats_ids]  # Extracting ids from the tuples
+
+    if not season_stats_ids:
+        print("No SeasonStats found for the given players and season")
+        return []
+
+    # Now, fetch the GameLog entries using the season_stats_ids
+    game_logs = GameLog.query.filter(GameLog.season_stats_id.in_(season_stats_ids)).all()
+
     return game_logs
+# -----------Prepare data for Graph---------
+def prepare_data_for_plotting(game_logs):
+    data = []
+    for log in game_logs:
+        player_name = Player.query.filter_by(player_id=log.season_stats.player_id).first().player_name
+        data.append({
+            'Player': player_name,
+            'Game Date': log.game_date,
+            'Assists': log.ast,
+            'Turnovers': log.tov
+        })
+    return data
+
 # -----------Graph Functions-----------------
 def create_assist_leaders_bar_graph(assist_leaders):
     # Convert query results to a DataFrame
@@ -101,17 +140,12 @@ def create_avg_assists_bar_plot(top_players_avg_assists):
     # Convert plot to HTML for Flask rendering
     return fig.to_html(full_html=False)
 
-def create_assists_turnovers_boxplot(game_logs):
-    df = pd.DataFrame(game_logs)
-    
-    # Plot assists
-    fig = px.box(df, x='Player', y='Assists', color='Player',
-                 title='Game-by-Game Assist and Turnover Distribution for Top 10 Assist Leaders in 2023-24')
-                 
-    # Overlay turnovers on the same plot
-    fig.add_trace(px.box(df, x='Player', y='Turnovers', color='Player').data[0])
-    
-    fig.update_layout(xaxis={'categoryorder':'total descending'}, boxmode='group')
+def create_boxplot(game_data):
+    df = pd.DataFrame(game_data)
+    print(df.columns)
+    fig = px.box(df, x='Player', y=['Assists', 'Turnovers'], color='Player', 
+                 title='Game-by-Game Assist and Turnover Distribution for Top 10 Assist Leaders')
+    fig.update_layout(xaxis_title='Player', yaxis_title='Count', boxmode='group')
     fig.update_layout(
             height=600,
             xaxis=dict(tickangle=-45, tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
@@ -120,7 +154,21 @@ def create_assists_turnovers_boxplot(game_logs):
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0)'
         )
+
+    return fig.to_html(full_html=False)
+
+# -----------App functions-----------------
+def assist_turnover_boxplot(season_year):
+    top_10_leaders = get_top_10_assist_leaders_for_season(season_year)
+
+    player_ids = [leader[0] for leader in top_10_leaders]
+    season = Season.query.filter_by(year=season_year).first()
+    game_logs = fetch_game_logs_for_players(player_ids, season.id)
+    # print(game_logs)
+    game_data = prepare_data_for_plotting(game_logs)
+    fig = create_boxplot(game_data)
     return fig
+
 
 def create_app():
     app = Flask(__name__)
@@ -136,13 +184,17 @@ def create_app():
     @app.route('/haliburton')
     def haliburton():
         try:
+            season_str = "2023-24" 
             assist_leaders = fetch_current_season_assist_leaders()
+            print("hi")
             graph_html = create_assist_leaders_bar_graph(assist_leaders)
             top_players_avg_assists = fetch_top_10_players_avg_assists_2023_24()
+            print("bi")
             graph_html2 = create_avg_assists_bar_plot(top_players_avg_assists)
-            
-            
-            return render_template('haliburton.html', graph_html=graph_html, graph_html2=graph_html2)
+            graph_html3=assist_turnover_boxplot(season_str)
+            return render_template('haliburton.html',  graph_html = graph_html, graph_html2 = graph_html2, graph_html3=graph_html3)
+
+
             # Convert to HTML
             # graph_html_this_year = fig_this_year.to_html(full_html=False)
      

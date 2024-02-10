@@ -18,7 +18,7 @@ class Season(db.Model):
 class SeasonStats(db.Model):
     __tablename__ = 'season_stats'
     id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.player_id'), nullable=False)
     season_id = db.Column(db.Integer, db.ForeignKey('season.id'), nullable=False)
     assist_leader = db.Column(db.Boolean, default=False, nullable=False)
     player_name = db.Column(db.String, nullable=False)
