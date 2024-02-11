@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import pytz  # For timezone handling, install with 'pip install pytz'
-from nba_api.stats.endpoints import leagueleaders, playergamelog
-from models import GameLog, Season, SeasonStats, Player
+from nba_api.stats.endpoints import leagueleaders, playergamelog, shotchartdetail
+from models import GameLog, Season, SeasonStats, Player, Shotchart
 from extensions import db
 from app import create_app
 from sqlalchemy import create_engine
@@ -117,7 +117,6 @@ def fetch_top_assist_leaders_past_40_years():
             except Exception as e:
                 print(f"Error fetching data for season {season_str}: {e}")
                 db.session.rollback()
-
 def fetch_and_save_game_logs():
     app = create_app()
     with app.app_context():
@@ -181,18 +180,76 @@ def fetch_and_save_game_logs():
                 
                 db.session.commit()
                 print(f"Finished updating game logs for {player.player_name} for the {season_str} season.")
+def fetch_and_load_shot_charts_for_all_players():
+    # Fetch all players from your database
+    app = create_app()
+    with app.app_context():
+        all_players = Player.query.all()
 
+        for player in all_players:
+            season_stats_records = SeasonStats.query.filter_by(player_id=player.player_id).all()
+            for season_stats in season_stats_records:
+                season = Season.query.filter_by(id=season_stats.season_id).first()
+                if not season:
+                    continue
+
+                try:
+                    shotchart_info = shotchartdetail.ShotChartDetail(
+                        team_id=0,
+                        player_id=player.player_id,
+                        context_measure_simple='FGA',
+                        season_nullable=season.year,
+                        season_type_all_star='Regular Season'
+                    )
+
+                    shots = shotchart_info.get_data_frames()[0]
+
+                    for _, row in shots.iterrows():
+                        shot = Shotchart(
+                            season_stats_id=season_stats.id,
+                            player_id=player.id,
+                            game_date=datetime.strptime(row['GAME_DATE'], '%Y%m%d').date(),
+                            x_coordinate=row['LOC_X'],
+                            y_coordinate=row['LOC_Y'],
+                            shot_made=bool(row['SHOT_MADE_FLAG']),
+                            # Map all new fields here,
+                            game_id=row['GAME_ID'],
+                            game_event_id=row['GAME_EVENT_ID'],
+                            player_name=row['PLAYER_NAME'],
+                            team_id=row['TEAM_ID'],
+                            team_name=row['TEAM_NAME'],
+                            period=row['PERIOD'],
+                            minutes_remaining=row['MINUTES_REMAINING'],
+                            seconds_remaining=row['SECONDS_REMAINING'],
+                            event_type=row['EVENT_TYPE'],
+                            action_type=row['ACTION_TYPE'],
+                            shot_type=row['SHOT_TYPE'],
+                            shot_zone_basic=row['SHOT_ZONE_BASIC'],
+                            shot_zone_area=row['SHOT_ZONE_AREA'],
+                            shot_zone_range=row['SHOT_ZONE_RANGE'],
+                            shot_distance=row['SHOT_DISTANCE'],
+                            shot_attempted_flag=bool(row['SHOT_ATTEMPTED_FLAG']),
+                            htm=row.get('HTM', None),
+                            vtm=row.get('VTM', None),
+                        )
+                        db.session.add(shot)
+                except Exception as e:
+                    print(f"Error fetching shot chart for {player.player_name} for season {season.year}: {e}")
+
+        db.session.commit()
 
             
             
 if __name__ == '__main__':
     try:
-        # fetch_top_assist_leaders()
-        # print("Top 20 assist leaders fetched successfully.")
+        fetch_top_assist_leaders()
+        print("Top 20 assist leaders fetched successfully.")
         fetch_top_assist_leaders_past_40_years()
         print("Top assist leaders up to 40 years ago fetched successfully.")
         fetch_and_save_game_logs()
         print("PLayer game logs fetched successfully.")
+        fetch_and_load_shot_charts_for_all_players()
+        print("fetch_and_load_shot_charts_for_all_players succeeded")
     except Exception as e:
         print(f"An error occurred: {e}")
         db.session.rollback()

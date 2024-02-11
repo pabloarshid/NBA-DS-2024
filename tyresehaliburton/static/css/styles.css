@@ -10,10 +10,9 @@ body {
     margin: 0;
     padding: 0;
     text-align: center;
-    background-color: black;
+    background-color: #001484;
     /* overflow: hidden; */
     position: relative;
-    background-color:black;
     background-image:
     radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 10px),
     radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 10px),
@@ -26,7 +25,7 @@ body {
 /* NAV BAR STYLING */
 /* ----------------------------- */
 nav {
-    background-color: black; 
+    background-color: #001484; 
     overflow: hidden;
     position: fixed;
     top: 0;
