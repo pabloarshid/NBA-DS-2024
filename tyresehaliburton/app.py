@@ -45,7 +45,7 @@ def fetch_top_10_players_avg_assists_2023_24():
      .join(Season, SeasonStats.season_id == Season.id)\
      .filter(Season.year == season_str)\
      .order_by((SeasonStats.assists).desc())\
-     .limit(10)\
+     .limit(20)\
      .all()
 
     return top_players_avg_assists
@@ -61,7 +61,7 @@ def get_top_10_assist_leaders_for_season(season_year):
         ).join(SeasonStats, Player.player_id == SeasonStats.player_id)\
         .filter(SeasonStats.season_id == season.id)\
         .order_by(SeasonStats.assists.desc())\
-        .limit(10)\
+        .limit(20)\
         .all()
      
     return top_10_assist_leaders
@@ -83,23 +83,37 @@ def fetch_game_logs_for_players(player_ids, season_id):
     if not season_stats_ids:
         print("No SeasonStats found for the given players and season")
         return []
-
+ 
     # Now, fetch the GameLog entries using the season_stats_ids
-    game_logs = GameLog.query.filter(GameLog.season_stats_id.in_(season_stats_ids)).all()
+    game_logs_data = []
 
+    # Fetch game logs for the given players and season
+    game_logs = GameLog.query.join(SeasonStats)\
+                             .filter(SeasonStats.player_id.in_(player_ids),
+                                     SeasonStats.season_id == season_id)\
+                             .all()
+    # game_logs = GameLog.query.filter(GameLog.season_stats_id.in_(season_stats_ids)).all()
+    # Extract data from game logs
+    
     return game_logs
 # -----------Prepare data for Graph---------
 def prepare_data_for_plotting(game_logs):
-    data = []
+    game_logs_data = [] 
     for log in game_logs:
-        player_name = Player.query.filter_by(player_id=log.season_stats.player_id).first().player_name
-        data.append({
-            'Player': player_name,
-            'Game Date': log.game_date,
-            'Assists': log.ast,
-            'Turnovers': log.tov
+        # print(log)
+        # Append assists data
+        game_logs_data.append({
+            'Player-Season': f"{log.season_stats.player.player_name} ({log.season_stats.season.year})",
+            'Stat Type': 'Assists',
+            'Count': log.ast
         })
-    return data
+        # Append turnovers data
+        game_logs_data.append({
+            'Player-Season': f"{log.season_stats.player.player_name} ({log.season_stats.season.year})",
+            'Stat Type': 'Turnovers',
+            'Count': log.tov
+        })
+    return game_logs_data
 
 # -----------Graph Functions-----------------
 def create_assist_leaders_bar_graph(assist_leaders):
@@ -141,10 +155,10 @@ def create_avg_assists_bar_plot(top_players_avg_assists):
     return fig.to_html(full_html=False)
 
 def create_boxplot(game_data):
-    df = pd.DataFrame(game_data)
-    print(df.columns)
-    fig = px.box(df, x='Player', y=['Assists', 'Turnovers'], color='Player', 
-                 title='Game-by-Game Assist and Turnover Distribution for Top 10 Assist Leaders')
+    df_plot = pd.DataFrame(game_data)
+
+    fig = px.box(df_plot, x='Player-Season', y='Count', color='Stat Type', 
+             title='Game-by-Game Assist and Turnover Distribution of Top Assist Leaders by Season')
     fig.update_layout(xaxis_title='Player', yaxis_title='Count', boxmode='group')
     fig.update_layout(
             height=600,
@@ -186,10 +200,8 @@ def create_app():
         try:
             season_str = "2023-24" 
             assist_leaders = fetch_current_season_assist_leaders()
-            print("hi")
             graph_html = create_assist_leaders_bar_graph(assist_leaders)
             top_players_avg_assists = fetch_top_10_players_avg_assists_2023_24()
-            print("bi")
             graph_html2 = create_avg_assists_bar_plot(top_players_avg_assists)
             graph_html3=assist_turnover_boxplot(season_str)
             return render_template('haliburton.html',  graph_html = graph_html, graph_html2 = graph_html2, graph_html3=graph_html3)

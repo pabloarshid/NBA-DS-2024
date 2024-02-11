@@ -8,6 +8,7 @@ class Player(db.Model):
     player_id = db.Column(db.Integer, unique=True, nullable=False)
     player_name = db.Column(db.String(255), nullable=False)
     season_stats = db.relationship('SeasonStats', backref='player', lazy=True)
+    shotcharts = db.relationship('Shotchart', backref='player', lazy=True)
 
 class Season(db.Model):
     __tablename__ = 'season'
@@ -27,11 +28,12 @@ class SeasonStats(db.Model):
     turnovers = db.Column(db.Float)
     points = db.Column(db.Float)
     game_logs = db.relationship('GameLog', back_populates='season_stats')
+    shotcharts = db.relationship('Shotchart', backref='season_stats', lazy=True)
     
 class GameLog(db.Model):
     __tablename__ = 'game_log'
     id = db.Column(db.Integer, primary_key=True)
-    season_stats_id = db.Column(db.Integer, db.ForeignKey('season_stats.id'), nullable=False)  # Connect to SeasonStats
+    season_stats_id = db.Column(db.Integer, db.ForeignKey('season_stats.id'), nullable=False)
     game_id = db.Column(db.String, nullable=False)
     game_date = db.Column(db.Date, nullable=False)
     matchup = db.Column(db.String, nullable=False)
@@ -57,5 +59,14 @@ class GameLog(db.Model):
     pts = db.Column(db.Integer)
     plus_minus = db.Column(db.Integer)
 
-    # Relationship to SeasonStats
     season_stats = db.relationship('SeasonStats', back_populates='game_logs')
+
+class Shotchart(db.Model):
+    __tablename__ = 'shotchart'
+    id = db.Column(db.Integer, primary_key=True)
+    season_stats_id = db.Column(db.Integer, db.ForeignKey('season_stats.id'), nullable=False)
+    player_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
+    game_date = db.Column(db.Date, nullable=False)
+    x_coordinate = db.Column(db.Float, nullable=False)
+    y_coordinate = db.Column(db.Float, nullable=False)
+    shot_made = db.Column(db.Boolean, nullable=False)

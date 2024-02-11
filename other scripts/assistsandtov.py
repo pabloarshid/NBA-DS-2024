@@ -9,7 +9,7 @@ def get_game_logs(player_id, season):
     df = game_logs.get_data_frames()[0]
     return df[['AST', 'TOV']]  # Fetch both assists and turnovers
 
-def get_top_assist_leaders(seasons_back=25):
+def get_top_assist_leaders(seasons_back=10):
     current_year = datetime.now().year
     leaders = []
 
@@ -24,6 +24,7 @@ def get_top_assist_leaders(seasons_back=25):
             if not df.empty:
                 top_leader = df.iloc[0]
                 game_data = get_game_logs(top_leader['PLAYER_ID'], season)
+                print(game_data)
                 for _, row in game_data.iterrows():
                     leaders.append({
                         'Player-Season': f"{top_leader['PLAYER']} ({season})",
@@ -45,15 +46,15 @@ top_assist_leaders = get_top_assist_leaders()
 
 # Preparing data for the boxplot
 df_plot = pd.DataFrame(top_assist_leaders)
-
+print(df_plot)
 # Extract the season year for sorting
-df_plot['Season Year'] = df_plot['Player-Season'].apply(lambda x: x.split('(')[-1].split(')')[0])
-# Sort the DataFrame by 'Season Year' and 'Player-Season' in descending order
-df_plot.sort_values(by=['Season Year', 'Player-Season'], ascending=False, inplace=True)
+# df_plot['Season Year'] = df_plot['Player-Season'].apply(lambda x: x.split('(')[-1].split(')')[0])
+# # Sort the DataFrame by 'Season Year' and 'Player-Season' in descending order
+# df_plot.sort_values(by=['Season Year', 'Player-Season'], ascending=False, inplace=True)
 
-# Creating the boxplot using Plotly
-fig = px.box(df_plot, x='Player-Season', y='Count', color='Stat Type', 
-             title='Game-by-Game Assist and Turnover Distribution of Top Assist Leaders by Season')
-fig.update_layout(xaxis_title='Player (Season)', yaxis_title='Count', boxmode='group')
-fig.update_xaxes(categoryorder='array', categoryarray=df_plot['Player-Season'].unique())
-fig.show()
+# # Creating the boxplot using Plotly
+# fig = px.box(df_plot, x='Player-Season', y='Count', color='Stat Type', 
+#              title='Game-by-Game Assist and Turnover Distribution of Top Assist Leaders by Season')
+# fig.update_layout(xaxis_title='Player (Season)', yaxis_title='Count', boxmode='group')
+# fig.update_xaxes(categoryorder='array', categoryarray=df_plot['Player-Season'].unique())
+# fig.show()
