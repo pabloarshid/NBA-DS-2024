@@ -1,4 +1,4 @@
-# NBA Assist Leaders Analysis Web Application
+# NBA Player Analysis Web Application
 
 ## Overview
 This web application provides an interactive analysis of NBA assist leaders over the last 40 years. It fetches and displays game-by-game assist and turnover data for the top assist leaders each season, presenting the information in a series of insightful boxplots.
