@@ -1,8 +1,8 @@
-"""Updated migration for shot charts
+"""Updated migration for season stats
 
-Revision ID: 03dae2311623
+Revision ID: 95684fd178a8
 Revises: 
-Create Date: 2024-02-11 01:51:31.464904
+Create Date: 2024-02-11 23:32:12.064276
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '03dae2311623'
+revision = '95684fd178a8'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,10 +37,30 @@ def upgrade():
     sa.Column('season_id', sa.Integer(), nullable=False),
     sa.Column('assist_leader', sa.Boolean(), nullable=False),
     sa.Column('player_name', sa.String(), nullable=False),
-    sa.Column('assists', sa.Float(), nullable=True),
-    sa.Column('games_played', sa.Integer(), nullable=True),
-    sa.Column('turnovers', sa.Float(), nullable=True),
-    sa.Column('points', sa.Float(), nullable=True),
+    sa.Column('ast', sa.Float(), nullable=True),
+    sa.Column('pts', sa.Float(), nullable=True),
+    sa.Column('team', sa.String(), nullable=True),
+    sa.Column('gp', sa.Integer(), nullable=True),
+    sa.Column('min', sa.Float(), nullable=True),
+    sa.Column('fgm', sa.Float(), nullable=True),
+    sa.Column('fga', sa.Float(), nullable=True),
+    sa.Column('fg_pct', sa.Float(), nullable=True),
+    sa.Column('fg3m', sa.Float(), nullable=True),
+    sa.Column('fg3a', sa.Float(), nullable=True),
+    sa.Column('fg3_pct', sa.Float(), nullable=True),
+    sa.Column('ftm', sa.Float(), nullable=True),
+    sa.Column('fta', sa.Float(), nullable=True),
+    sa.Column('ft_pct', sa.Float(), nullable=True),
+    sa.Column('oreb', sa.Float(), nullable=True),
+    sa.Column('dreb', sa.Float(), nullable=True),
+    sa.Column('reb', sa.Float(), nullable=True),
+    sa.Column('stl', sa.Float(), nullable=True),
+    sa.Column('blk', sa.Float(), nullable=True),
+    sa.Column('tov', sa.Float(), nullable=True),
+    sa.Column('pf', sa.Float(), nullable=True),
+    sa.Column('eff', sa.Float(), nullable=True),
+    sa.Column('ast_tov', sa.Float(), nullable=True),
+    sa.Column('stl_tov', sa.Float(), nullable=True),
     sa.ForeignKeyConstraint(['player_id'], ['player.player_id'], ),
     sa.ForeignKeyConstraint(['season_id'], ['season.id'], ),
     sa.PrimaryKeyConstraint('id')

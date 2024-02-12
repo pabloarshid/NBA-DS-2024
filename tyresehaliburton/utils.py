@@ -39,11 +39,11 @@ def fetch_top_10_players_avg_assists_2023_24():
     # Query to fetch top 10 players' names and their average points for the 2023-24 season
     top_players_avg_assists = db.session.query(
         Player.player_name,
-        (SeasonStats.assists).label('avg_assists_per_game')
+        (SeasonStats.ast).label('avg_assists_per_game')
     ).join(SeasonStats, SeasonStats.player_id == Player.player_id)\
      .join(Season, SeasonStats.season_id == Season.id)\
      .filter(Season.year == season_str)\
-     .order_by((SeasonStats.assists).desc())\
+     .order_by((SeasonStats.ast).desc())\
      .limit(20)\
      .all()
 
@@ -56,10 +56,10 @@ def get_top_10_assist_leaders_for_season(season_year):
     top_10_assist_leaders = db.session.query(
             Player.player_id,
             Player.player_name,
-            SeasonStats.assists.label('avg_assists')
+            SeasonStats.ast.label('avg_assists')
         ).join(SeasonStats, Player.player_id == SeasonStats.player_id)\
         .filter(SeasonStats.season_id == season.id)\
-        .order_by(SeasonStats.assists.desc())\
+        .order_by(SeasonStats.ast.desc())\
         .limit(20)\
         .all()
      
@@ -149,6 +149,19 @@ def fetch_player_shot_chart_for_season(player_name, season_year):
 
     df_shots = pd.DataFrame(shots_data)
     return df_shots
+def fetch_player_gen_stats(player_name):
+    # Assuming player_name is "Tyrese Haliburton", adjust as necessary
+    player = Player.query.filter_by(player_name=player_name).first()
+    if not player:
+        return "Player not found", 404
+    
+    # Fetch the most recent season stats for the player
+    season_stats = SeasonStats.query.filter_by(player_id=player.player_id).order_by(SeasonStats.season_id.desc()).first()
+    
+    if not season_stats:
+        return "Season stats not found", 404
+    return season_stats
+
 # -----------Prepare data for Graph---------
 def prepare_data_for_plotting(game_logs):
     game_logs_data = [] 

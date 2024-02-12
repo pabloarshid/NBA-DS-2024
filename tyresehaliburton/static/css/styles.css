@@ -115,8 +115,8 @@ nav ul li.second {
 
 }
 .content *{
-    /* border-style: solid;
-    border-color: white; */
+    border-style: solid;
+    border-color: white;
 }
 .content-card{
     display:flex;

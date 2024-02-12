@@ -31,18 +31,36 @@ def fetch_top_assist_leaders():
         # Fetching the top 20 assist leaders
         assist_leaders_data = leagueleaders.LeagueLeaders(stat_category_abbreviation='AST', season=season_str, per_mode48='PerGame')
         leaders_df = assist_leaders_data.get_data_frames()[0].head(20)
-
+        print(leaders_df.columns)
         top_assist_value = leaders_df.iloc[0]['AST']  # Get the highest assists per game value
 
         for index, row in leaders_df.iterrows():
             player_id = int(row['PLAYER_ID'])
             player_name = row['PLAYER']
-            assists_per_game = row['AST']
-            is_assist_leader = assists_per_game == top_assist_value  # Flag as assist leader if matches top value
-            # Other stats processing...
-            games_played = row['GP']
-            turnovers = row['TOV']
-            points = row['PTS']
+            ast = row['AST']
+            is_assist_leader = ast == top_assist_value  # Flag as assist leader if matches top value
+            # Extracting additional stats from the row
+            gp = row['GP']
+            min_per_game = row['MIN']
+            fgm = row['FGM']
+            fga = row['FGA']
+            fg_pct = row['FG_PCT']
+            fg3m = row['FG3M']
+            fg3a = row['FG3A']
+            fg3_pct = row['FG3_PCT']
+            ftm = row['FTM']
+            fta = row['FTA']
+            ft_pct = row['FT_PCT']
+            oreb = row['OREB']
+            dreb = row['DREB']
+            reb = row['REB']
+            stl = row['STL']
+            blk = row['BLK']
+            tov = row['TOV']
+            pts = row['PTS']
+            eff = row.get('EFF', None)  # Assuming EFF might not be in some responses
+            ast_tov = row.get('AST_TOV', None)
+            stl_tov = row.get('STL_TOV', None)
 
             # Insert or update Player in the database
             player = Player.query.filter_by(player_id=player_id).first()
@@ -54,17 +72,65 @@ def fetch_top_assist_leaders():
             # Update SeasonStats for the player and season
             season_stats = SeasonStats.query.filter_by(player_id=player.player_id, season_id=season.id).first()
             if not season_stats:
-                season_stats = SeasonStats(player_id=player.player_id, season_id=season.id, assist_leader=is_assist_leader, player_name=player_name, assists=assists_per_game, games_played=games_played, turnovers=turnovers, points=points)
+                season_stats = SeasonStats(
+                    player_id=player.player_id,
+                    season_id=season.id,
+                    assist_leader=is_assist_leader,
+                    player_name=player_name,
+                    ast=ast,
+                    gp=gp,
+                    tov=tov,
+                    pts=pts,
+                    # Initialize all other fields for a new record
+                    min=min_per_game,
+                    fgm=fgm,
+                    fga=fga,
+                    fg_pct=fg_pct,
+                    fg3m=fg3m,
+                    fg3a=fg3a,
+                    fg3_pct=fg3_pct,
+                    ftm=ftm,
+                    fta=fta,
+                    ft_pct=ft_pct,
+                    oreb=oreb,
+                    dreb=dreb,
+                    reb=reb,
+                    stl=stl,
+                    blk=blk,
+                    eff=eff,
+                    ast_tov=ast_tov,
+                    stl_tov=stl_tov
+                )
                 db.session.add(season_stats)
             else:
-                # Update existing stats, potentially adjust the assist_leader flag
+                # Directly update attributes for an existing record
                 season_stats.assist_leader = is_assist_leader
-                season_stats.assists = assists_per_game
-                season_stats.games_played = games_played
-                season_stats.turnovers = turnovers
-                season_stats.points = points
+                season_stats.ast = ast
+                season_stats.gp = gp
+                season_stats.pts = pts
+                # Update all additional stats here
+                season_stats.min = min_per_game
+                season_stats.fgm = fgm
+                season_stats.fga = fga
+                season_stats.fg_pct = fg_pct
+                season_stats.fg3m = fg3m
+                season_stats.fg3a = fg3a
+                season_stats.fg3_pct = fg3_pct
+                season_stats.ftm = ftm
+                season_stats.fta = fta
+                season_stats.ft_pct = ft_pct
+                season_stats.oreb = oreb
+                season_stats.dreb = dreb
+                season_stats.reb = reb
+                season_stats.stl = stl
+                season_stats.blk = blk
+                season_stats.tov = tov
+                season_stats.eff = eff if 'eff' in leaders_df.columns else None  # Check if EFF is present
+                season_stats.ast_tov = ast_tov if 'AST_TOV' in leaders_df.columns else None
+                season_stats.stl_tov = stl_tov if 'STL_TOV' in leaders_df.columns else None
 
-        db.session.commit()        
+            db.session.commit()
+  
 def fetch_top_assist_leaders_past_40_years():
     app = create_app()
     with app.app_context():
@@ -244,8 +310,8 @@ if __name__ == '__main__':
     try:
         fetch_top_assist_leaders()
         print("Top 20 assist leaders fetched successfully.")
-        fetch_top_assist_leaders_past_40_years()
-        print("Top assist leaders up to 40 years ago fetched successfully.")
+        # fetch_top_assist_leaders_past_40_years()
+        # print("Top assist leaders up to 40 years ago fetched successfully.")
         fetch_and_save_game_logs()
         print("PLayer game logs fetched successfully.")
         fetch_and_load_shot_charts_for_all_players()
