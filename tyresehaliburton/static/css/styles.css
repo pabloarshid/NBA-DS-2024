@@ -3,24 +3,6 @@
     src: url('../fonts/NBAPacers.ttf') format('truetype');
 }
 
-/* General page styles */
-body {
-    font-family: 'YourCustomFont', sans-serif;
-    color: white;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    background-color: #001484;
-    /* overflow: hidden; */
-    position: relative;
-    background-image:
-    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 10px),
-    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 10px),
-    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 10px),
-    radial-gradient(rgba(255,255,255,.4), rgba(255,255,255,.1) 2px, transparent 10px);
-    background-size: 550px 550px, 350px 350px, 250px 250px, 150px 150px;
-    background-position: 0 0, 40px 60px, 130px 270px, 70px 100px;
-}
 /* ----------------------------- */
 /* NAV BAR STYLING */
 /* ----------------------------- */
@@ -106,26 +88,44 @@ nav ul li.second {
 }
 
 /* ===================================================== */
+
+/* General page styles */
+body {
+    font-family: 'YourCustomFont', sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #001484;
+}
+
  
 /* Content styling to push down below fixed nav */
 .content {
     margin-top: 10%;  /* Adjust as needed based on nav height */
-    margin-left: 20%;
-    margin-right: 20%;
+    margin-left: 10%;
+    margin-right: 10%;
 
 }
-.content *{
-    border-style: solid;
-    border-color: white;
-}
+
 .content-card{
     display:flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width:auto;
+    padding: 1em;
   }
-.title{
+
+ .assistbox{
+    border: dashed white;
+    border-radius: 50px;
+    margin: 2.5em;
+    max-width: 10%;
+ }
+/* .title{
     display:inline-flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-content: stretch;
     color:#FDBB30;
     background: lighten(brown, 5%);
@@ -137,15 +137,14 @@ nav ul li.second {
     padding-left: 5%;
 }
 .title-text{
-    width:50%;
-    font-size: 1.5em;
+    font-size: 1em;
 
 }
 .title-text h1,h2,h4{
     margin:auto;
     text-align: end;
     align-self: flex-start;
-}
+} */
 
 @keyframes flash-shadow {
     0%, 100% {
@@ -156,13 +155,14 @@ nav ul li.second {
     }
 }
   
-.halipng1{
-    width: 25%;        /* Example: set width to 100% of its container */
-    height: auto;       /* Adjust height automatically */
-    margin: 0 0;     /* Center the image */
-    animation: flash-shadow 2s infinite;
-}
+ /* .halipng1{ */
+    /* width: 25%;        Example: set width to 100% of its container */
+    /* height: auto;       Adjust height automatically */
+    /* margin: 0 0;     Center the im/age/ */
+    /* animation: flash-shadow 2s infinite; */
+/* } */
 
+/* 
 .intro{
     font-size: smaller;
     font-family: "Ubuntu Mono", monospace;
@@ -170,49 +170,26 @@ nav ul li.second {
     font-style: normal;
     color: #f9f9f9;
     margin-top:6em;
-}
+} */
 
 
-.basestat {
-    margin-top:5%;
-    margin-bottom:5%;
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    /* line-height: 0.1em; */
-}
+/* .basestat {
+
+} */
 
 
 /* crown effect */
 .crown {
     color: gold;
-    font-size: 1em; /* Adjust size as needed */
+    /* font-size: 1em; Adjust size as needed */
     /* text-align: center;
     position: relative; */
     text-shadow: 0 0 10px gold, 0 0 20px gold; /* Glowing effect */
     /* align-self: flex-end; */
 }
 
-/* crown effect
-.basestat span i{
-    align-self: center;
-} */
 
-#plot-container {
-    /* width: 60%; */
-    /* margin: auto;
-    padding: 20px; */
-}
- .assistbox{
-    font-family: "Ubuntu Mono", monospace;
-    font-size: 1em;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
- }
 
- .assistbox div{
-    flex: 1 1 0%
- }
+
+
 
