@@ -9,6 +9,8 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from sqlalchemy import func
 
+# rewrite for sections
+
 # -----------Fetch Functions-----------------
 def fetch_current_season_assist_leaders():
     current_year = datetime.now().year
@@ -193,14 +195,13 @@ def create_assist_leaders_bar_graph(assist_leaders):
     fig.update_layout(xaxis_tickangle=-45, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
     fig.update_traces(marker_color='blue')  # Optional: update marker color
     fig.update_layout(
-                height=600,
-                xaxis=dict(tickangle=-45, tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
-                yaxis=dict(tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+                xaxis=dict(tickangle=-45, tickfont=dict(size=7, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+                yaxis=dict(tickfont=dict(size=7, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
                 title_font=dict(color='#BEC0C2'),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='#BEC0C2'
             )
-    return fig.to_html(full_html=False)  # Convert the figure to HTML for embedding in Flask template
+    return fig.to_html(full_html=False, default_height=400, default_width=500)  # Convert the figure to HTML for embedding in Flask template
 def create_avg_assists_bar_plot(top_players_avg_assists):
     # Convert the fetched data into a DataFrame
     df = pd.DataFrame(top_players_avg_assists, columns=['Player Name', 'Average Assists Per Game'])
@@ -209,32 +210,31 @@ def create_avg_assists_bar_plot(top_players_avg_assists):
     fig = px.bar(df, x='Player Name', y='Average Assists Per Game', title='Top 10 Players by Average Points Per Game in 2023-24 Season')
    
     fig.update_layout(
-                height=600,
-                xaxis=dict(tickangle=-45, tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
-                yaxis=dict(tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+                xaxis=dict(tickangle=-45, tickfont=dict(size=7, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+                yaxis=dict(tickfont=dict(size=7, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
                 title_font=dict(color='#BEC0C2'),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='#BEC0C2'
             )
 
     # Convert plot to HTML for Flask rendering
-    return fig.to_html(full_html=False)
+    return fig.to_html(full_html=False, default_height=400, default_width=500)
 def create_boxplot(game_data):
     df_plot = pd.DataFrame(game_data)
 
     fig = px.box(df_plot, x='Player-Season', y='Count', color='Stat Type', 
-             title='Game-by-Game Assist and Turnover Distribution of Top Assist Leaders by Season')
-    fig.update_layout(xaxis_title='Player', yaxis_title='Count', boxmode='group')
+             title='Assist and Turnover GbG Distribution')
+    fig.update_layout(yaxis_title='Count', boxmode='group')
     fig.update_layout(
-            height=600,
-            xaxis=dict(tickangle=-45, tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
-            yaxis=dict(tickfont=dict(size=10, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+            xaxis=dict(tickangle=-45, tickfont=dict(size=7, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
+            yaxis=dict(tickfont=dict(size=7, color='#BEC0C2'), title_font=dict(color='#BEC0C2')),
             title_font=dict(color='#BEC0C2'),
+            title=dict(font=dict(size=15)),
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='#BEC0C2'
         )
 
-    return fig.to_html(full_html=False)
+    return fig.to_html(full_html=False, default_height=400, default_width=500)
 
 def create_court():
     # Create a figure
@@ -359,9 +359,9 @@ def create_shotsmadeplot(playerdata):
     fig.update_yaxes(showgrid=False, showticklabels=False, zeroline=False, range=[0, 470])
 
     # Set figure properties
-    fig.update_layout(height=500, width=600, title=f"'s Field Goals Made Scatter", font=dict(color='white'))
+    fig.update_layout(title=f"'s Field Goals Made Scatter", font=dict(color='white'))
 
-    return fig.to_html(full_html=False)
+    return fig.to_html(full_html=False, default_height=400, default_width=500)
 	
 # -----------App functions-----------------
 def assist_turnover_boxplot(season_year):

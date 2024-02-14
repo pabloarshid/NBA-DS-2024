@@ -13,6 +13,8 @@ nav {
     top: 0;
     width: 100%;
     text-align: center; /* Center content using text-align */
+    background-size: 40px 40px;
+    background-image: radial-gradient(circle, rgba(255,255,255,40%) 1px, rgba(0, 0, 0, 0) 1px);
 }
 
 nav ul {
@@ -76,7 +78,7 @@ nav ul li.home a .additional-text {
 }
 
 nav ul li.home a:hover .additional-text {
-    opacity: .4; /* Fully visible on hover */
+    opacity: .5; /* Fully visible on hover */
     text-decoration: underline;
     text-decoration-color: grey;
 }
@@ -97,54 +99,80 @@ body {
     padding: 0;
     text-align: center;
     background-color: #001484;
+    background-size: 40px 40px;
+    background-image: radial-gradient(circle, rgba(255,255,255,40%) 1px, rgba(0, 0, 0, 0) 1px);
 }
 
  
 /* Content styling to push down below fixed nav */
 .content {
-    margin-top: 10%;  /* Adjust as needed based on nav height */
+    margin-top: 5%; 
     margin-left: 10%;
     margin-right: 10%;
-
 }
 
 .content-card{
     display:flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    width:auto;
-    padding: 1em;
+    justify-content: space-around;
+    gap: 20px;
   }
 
  .assistbox{
-    border: dashed white;
-    border-radius: 50px;
-    margin: 2.5em;
-    max-width: 10%;
+    border: dashed rgba(255, 255, 255, 100%);
+    border-radius: 15%;
+    padding: 8px 20px ;
  }
-/* .title{
-    display:inline-flex;
+
+ .plot-container{
+    flex: 1 1 calc(50% - 20px); /* Adjusting for gap */
+    height: 400px; /* Fixed height */
+}
+@media (max-width: 768px) {
+    .plot-container {
+        flex: 1 1 100%;
+    }
+}
+/* crown effect */
+.title-h{
+    display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-content: stretch;
+    justify-content:center;
+    align-items: center;
+}
+.title-h *{
     color:#FDBB30;
+    padding-right: 15px;
+    
+}
+
+
+.ticker{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.title-hs{
     background: lighten(brown, 5%);
     text-shadow: 6px -3px 1px #002D62, 
-                 9px 5px 1px rgba(190, 192, 194,.30);
-}
-
-.title img{
-    padding-left: 5%;
-}
-.title-text{
-    font-size: 1em;
+                    9px 5px 1px rgba(190, 192, 194,.30);
+    font-size: em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
 
 }
-.title-text h1,h2,h4{
-    margin:auto;
-    text-align: end;
-    align-self: flex-start;
-} */
+.basestat{
+    display: flex;
+    flex-direction: row;
+    align-items: last baseline;
+    gap: 2%;
+}
+.crown {
+    color: gold;
+    text-shadow: 0 0 10px gold, 0 0 20px gold; /* Glowing effect */
+}
 
 @keyframes flash-shadow {
     0%, 100% {
@@ -154,42 +182,3 @@ body {
         filter: drop-shadow(0 0 10px rgba(253, 187, 48, 0)); /* Shadow invisible */
     }
 }
-  
- /* .halipng1{ */
-    /* width: 25%;        Example: set width to 100% of its container */
-    /* height: auto;       Adjust height automatically */
-    /* margin: 0 0;     Center the im/age/ */
-    /* animation: flash-shadow 2s infinite; */
-/* } */
-
-/* 
-.intro{
-    font-size: smaller;
-    font-family: "Ubuntu Mono", monospace;
-    font-weight: 400;
-    font-style: normal;
-    color: #f9f9f9;
-    margin-top:6em;
-} */
-
-
-/* .basestat {
-
-} */
-
-
-/* crown effect */
-.crown {
-    color: gold;
-    /* font-size: 1em; Adjust size as needed */
-    /* text-align: center;
-    position: relative; */
-    text-shadow: 0 0 10px gold, 0 0 20px gold; /* Glowing effect */
-    /* align-self: flex-end; */
-}
-
-
-
-
-
-

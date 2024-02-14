@@ -1,25 +1,68 @@
 {% extends "layout.html" %}
 {% block content %}
+<div class = "ticker">
+    <div class="title-h">  
+        <h1>Tyrese</h1>
+        <h1>Haliburton</h1>
+        <h2>0</h2>
+        <h2>6'5" 185 lbs</h2>
+    </div>  
+    <div class="title-hs basestat">
+        <span>
+            <h1>{{ stats.pts }}</h1>
+            <h1>PTS/G</h1>
+        </span>
+        <span>
+            <h1>{{ stats.reb }}</h1>
+            <h1>REB/G</h1>
+        </span>
+        <div class="crown">
+            <span>
+                <i class="fas fa-crown"></i>
+            </span>
+            <span>
+                <h1>{{ stats.ast }}</h1>
+                <h1>AST/G</h1>
+            </span>
+        </div>
+        <span>
+            <h1>{{ stats.stl }}</h1>
+            <h1>STL/G</h1>
+        </span>
+        <span>
+            <h1>{{ stats.blk }}</h1>
+            <h1>BLK/G</h1>
+        </span>
+        <span>
+            <h1>{{ stats.fg_pct }}</h1>
+            <h1>FG%</h1>
+        </span>
+        <span>
+            <h1>{{ stats.fg3_pct }}</h1>
+            <h1>3P%</h1>
+        </span>
+    </div>
+</div>
 <div class="content-card">
-        <section class="assistbox">
-            <div id="plot-container">
-                {{ graph_html|safe }}
-            </div>
-        </section>
-        <section class="assistbox">
-            <div id="plot-container">
-                {{ graph_html2|safe }}
-            </div>
-        </section>
-        <section class="assistbox">
-            <div id="plot-container">
-                {{ graph_html3|safe }}
-            </div>
-        </section>
-        <section class="assistbox">
-            <div id="plot-container">
-                {{ graph_html4|safe }}
-            </div>
-        </section>   
+    <section class="assistbox">
+        <div id="plot-container">
+            {{ graph_html|safe }}
+        </div>
+    </section>
+    <section class="assistbox">
+        <div id="plot-container">
+            {{ graph_html2|safe }}
+        </div>
+    </section>
+    <section class="assistbox">
+        <div id="plot-container">
+            {{ graph_html3|safe }}
+        </div>
+    </section>
+    <section class="assistbox">
+        <div id="plot-container">
+            {{ graph_html4|safe }}
+        </div>
+    </section>
 </div>
 {% endblock %}
